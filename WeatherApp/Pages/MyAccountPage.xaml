@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="WeatherApp.Pages.MyAccountPage"
+             Title="MyAccountPage">
+
+    <Grid RowDefinitions="Auto, *"
+      RowSpacing="0">
+
+        <VerticalStackLayout Grid.Row="0"
+                         Spacing="1"
+                         Padding="20"
+                         VerticalOptions="Start"
+                         BackgroundColor="Cyan">
+            <Image Source="user1.png"
+                     HeightRequest="250"
+                     WidthRequest="250"
+                     Aspect="AspectFill" />
+            <Label x:Name="lblUserName"
+               HorizontalOptions="Center"
+               TextColor="Black" />
+        </VerticalStackLayout>
+
+        <VerticalStackLayout Grid.Row="1"
+                         Margin="20"
+                         Spacing="20">
+            <Entry Placeholder="Name"
+               x:Name="EntName" />
+            <Entry Placeholder="Email"
+               Keyboard="Email"
+               x:Name="EntEmail" />
+            <Entry Placeholder="Phone Number"
+               Keyboard="Telephone"
+               x:Name="EntPhoneNumber" />
+            <Button Text="Save"
+                FontSize="Large"
+                FontAttributes="Bold"
+                BackgroundColor="Cyan"
+                TextColor="Maroon"
+                x:Name="BtnSave"
+                Clicked="BtnSave_Clicked" />
+
+            <ImageButton Grid.Row="2"
+             Source="logout.png"
+             HeightRequest="60"
+             WidthRequest="60"
+             Padding="5"
+             ToolTipProperties.Text="Logout"
+             HorizontalOptions="Center"
+             BackgroundColor="Transparent"
+             x:Name="BtnLogout" 
+             Clicked="BtnLogout_Clicked"/>
+            
+        </VerticalStackLayout>
+    </Grid>
+    
+</ContentPage>

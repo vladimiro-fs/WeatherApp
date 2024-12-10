@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="WeatherApp.Pages.HomePage"
+             Title="HomePage">
+
+    <ContentPage.Content>
+        <StackLayout Padding="20" 
+                 Spacing="15">
+            <Label Text="Hello user! Should we take you anywhere?"
+               FontSize="24"
+               HorizontalOptions="Center"
+               TextColor="Black" />
+            <StackLayout Orientation="Horizontal" 
+                     Spacing="10">
+                <Entry x:Name="lblCityEntry"
+                   Placeholder="Enter city name"
+                   HorizontalOptions="FillAndExpand"
+                   TextChanged="OnCityEntryTextChanged"/>
+                <Button Text="Forecast"                                               
+                    x:Name="BtnForecast"
+                    Clicked="BtnForecast_Clicked"/>
+            </StackLayout>
+
+            <Label Text="Or should we check your favorites?"
+               FontSize="18"
+               HorizontalOptions="Start"
+               TextColor="Black"
+               Margin="0,20,0,10" />
+
+            <StackLayout Orientation="Horizontal" 
+                     Spacing="10">
+                <Picker x:Name="FavoritesPicker"
+                    Title="Select a favorite city"
+                    HorizontalOptions="FillAndExpand" />
+                <Button Text="Forecast"
+                    x:Name="BtnFavoritesForecast"
+                    Clicked="BtnFavoritesForecast_Clicked"/>
+            </StackLayout>
+        </StackLayout>
+    </ContentPage.Content>
+
+</ContentPage>
