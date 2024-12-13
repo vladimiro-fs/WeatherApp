@@ -21,5 +21,7 @@
         public string Country { get; set; }
 
         public string State { get; set; }
+
+        public bool IsFavorite { get; set; }
     }
 }

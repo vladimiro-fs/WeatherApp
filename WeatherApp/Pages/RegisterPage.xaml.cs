@@ -7,19 +7,19 @@ using WeatherApp.Validations;
 public partial class RegisterPage : ContentPage
 {
     private readonly ApiService _apiService;
-    private readonly CitiesService _citiesService;
+    private readonly FavoritesService _favoritesService;
     private readonly IRestService _restService;
     private readonly IValidator _validator;
 
     private WeatherData _weatherData;
 
-    public RegisterPage(ApiService apiService, CitiesService citiesService,
+    public RegisterPage(ApiService apiService, FavoritesService favoritesService,
                         IRestService restService, IValidator validator, 
                         WeatherData weatherData)
     {
         InitializeComponent();
         _apiService = apiService;
-        _citiesService = citiesService;
+        _favoritesService = favoritesService;
         _restService = restService;
         _validator = validator;
         _weatherData = weatherData;
@@ -29,12 +29,12 @@ public partial class RegisterPage : ContentPage
     {
         if (await _validator.Validate(EntName.Text, EntEmail.Text, EntPhoneNumber.Text, EntPassword.Text))
         {
-            var response = await _apiService.Register(EntName.Text, EntEmail.Text, EntPhoneNumber.Text, EntPassword.Text);
+            var response = await _apiService.RegisterUser(EntName.Text, EntEmail.Text, EntPhoneNumber.Text, EntPassword.Text);
 
             if (!response.HasError)
             {
                 await DisplayAlert("Success", "Your account was successfully created", "OK");
-                await Navigation.PushAsync(new LoginPage(_apiService, _citiesService, 
+                await Navigation.PushAsync(new LoginPage(_apiService, _favoritesService, 
                                                          _restService, _validator, _weatherData));
             }
             else
@@ -55,7 +55,7 @@ public partial class RegisterPage : ContentPage
 
     private async void TapLogin_Tapped(object sender, TappedEventArgs e)
     {
-        await Navigation.PushAsync(new LoginPage(_apiService, _citiesService,
+        await Navigation.PushAsync(new LoginPage(_apiService, _favoritesService,
                                                  _restService, _validator, _weatherData)); 
     }
 }

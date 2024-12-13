@@ -26,14 +26,15 @@
             builder.Services.AddHttpClient();
 
             builder.Services.AddSingleton<ApiService>();
-            builder.Services.AddSingleton<CitiesService>();
+            builder.Services.AddSingleton<FavoritesService>();
             builder.Services.AddSingleton<IRestService, RestService>();
             builder.Services.AddSingleton<IValidator, Validator>();
 
             builder.Services.AddTransient<HomePage>();
             builder.Services.AddTransient<WeatherPage>();
-            builder.Services.AddTransient<MyAccountPage>();
+            builder.Services.AddTransient<ProfilePage>();
             builder.Services.AddTransient<WeatherData>();
+            builder.Services.AddTransient<FavoritesPage>();
 
             return builder.Build();
         }

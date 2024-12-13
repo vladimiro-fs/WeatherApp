@@ -29,11 +29,12 @@
          Icon="weather.png">
             <ShellContent ContentTemplate="{DataTemplate pages:WeatherPage}" />
         </Tab>
-        <Tab Title="My Account"
+        <Tab Title="Profile"
              Icon="profile.png">
-            <ShellContent ContentTemplate="{DataTemplate pages:MyAccountPage}" />
+            <ShellContent ContentTemplate="{DataTemplate pages:ProfilePage}" />
         </Tab>
-        <Tab Title="Credits">
+        <Tab Title="Credits"
+             Icon="edit.png">
             <ShellContent ContentTemplate="{DataTemplate pages:CreditsPage}" />
         </Tab>
     </TabBar>

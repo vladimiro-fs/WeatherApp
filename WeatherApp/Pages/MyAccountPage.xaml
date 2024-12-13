@@ -12,26 +12,35 @@
                          Padding="20"
                          VerticalOptions="Start"
                          BackgroundColor="Cyan">
-            <Image Source="user1.png"
+
+            <ImageButton Source="user1.png"
                      HeightRequest="250"
                      WidthRequest="250"
-                     Aspect="AspectFill" />
+                     Padding="1"
+                     Aspect="AspectFill"
+                     x:Name="BtnProfileImage" />
+
             <Label x:Name="lblUserName"
                HorizontalOptions="Center"
                TextColor="Black" />
+
         </VerticalStackLayout>
 
         <VerticalStackLayout Grid.Row="1"
                          Margin="20"
                          Spacing="20">
+
             <Entry Placeholder="Name"
                x:Name="EntName" />
+
             <Entry Placeholder="Email"
                Keyboard="Email"
                x:Name="EntEmail" />
-            <Entry Placeholder="Phone Number"
+
+            <Entry Placeholder="PhoneNumber"
                Keyboard="Telephone"
                x:Name="EntPhoneNumber" />
+
             <Button Text="Save"
                 FontSize="Large"
                 FontAttributes="Bold"
@@ -40,18 +49,8 @@
                 x:Name="BtnSave"
                 Clicked="BtnSave_Clicked" />
 
-            <ImageButton Grid.Row="2"
-             Source="logout.png"
-             HeightRequest="60"
-             WidthRequest="60"
-             Padding="5"
-             ToolTipProperties.Text="Logout"
-             HorizontalOptions="Center"
-             BackgroundColor="Transparent"
-             x:Name="BtnLogout" 
-             Clicked="BtnLogout_Clicked"/>
-            
         </VerticalStackLayout>
+
     </Grid>
-    
+
 </ContentPage>

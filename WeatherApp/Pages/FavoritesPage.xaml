@@ -5,45 +5,52 @@
              Title="FavoritesPage">
 
     <VerticalStackLayout>
-
         <Label x:Name="lblWarning"
            Text="No item selected"
            FontSize="Large"
            FontAttributes="Bold"
            TextColor="Red"
            HorizontalOptions="Center"
-           VerticalOptions="Center"
-           IsVisible="False" />
+           VerticalOptions="Center" />
 
         <CollectionView x:Name="cvCities"
-                    Margin="10">
+                    ItemsSource="{Binding FavoriteCities}"
+                    Margin="10"
+                    SelectionMode="Single"
+                    SelectionChanged="cvCities_SelectionChanged">
             <CollectionView.ItemsLayout>
                 <GridItemsLayout Orientation="Vertical"
                              Span="2"
                              HorizontalItemSpacing="15"
-                             VerticalItemSpacing="15"/>
+                             VerticalItemSpacing="15" />
             </CollectionView.ItemsLayout>
 
             <CollectionView.ItemTemplate>
                 <DataTemplate>
                     <Border VerticalOptions="Start"
                         StrokeShape="RoundRectangle 10, 10, 10, 10"
-                        Padding="10">
+                        Padding="10"
+                        BackgroundColor="LightGray">
                         <Grid RowSpacing="5"
-                          RowDefinitions="Auto, Auto, Auto, Auto"
+                          RowDefinitions="Auto, Auto, Auto"
                           Padding="10">
+                            
+                            <Label Grid.Row="0"
+                               FontAttributes="Bold"
+                               FontSize="Medium"
+                               Text="{Binding Name}" />
                            
                             <Label Grid.Row="1"
-                               FontAttributes="Bold"
-                               LineBreakMode="WordWrap"
-                               MaxLines="2"
-                               Text="{Binding Name}" />
+                               FontSize="Small"
+                               Text="{Binding Lat, StringFormat='Latitude: {0:F6}'}" />
+       
                             <Label Grid.Row="2"
-                               FontAttributes="Bold"
-                               Text="{Binding Lat}" />
+                               FontSize="Small"
+                               Text="{Binding Lon, StringFormat='Longitude: {0:F6}'}" />
+
                             <Label Grid.Row="3"
-                                   FontAttributes="Bold"
-                                   Text="{Binding Lon}" />
+                                   FontSize="Small"
+                                   Text="{Binding Country}" />
                         </Grid>
                     </Border>
                 </DataTemplate>

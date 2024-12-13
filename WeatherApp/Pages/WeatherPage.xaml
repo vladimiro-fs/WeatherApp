@@ -224,7 +224,7 @@
             FontSize="18" />
                 <Switch x:Name="FavoriteSwitch"
              IsToggled="False"
-             Toggled="OnFavoriteToggled" />
+             Toggled="FavoriteSwitch_Toggled" />
             </StackLayout>
         </StackLayout>
     </Grid>

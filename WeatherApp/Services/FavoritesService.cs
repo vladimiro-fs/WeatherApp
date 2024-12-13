@@ -9,7 +9,11 @@
 
         public FavoritesService()
         {
-            var dbPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "favorites.db");
+            var dbPath = Path.Combine(
+                            Environment.GetFolderPath(
+                            Environment.SpecialFolder.LocalApplicationData),
+                            "favorites.db");
+
             _database = new SQLiteAsyncConnection(dbPath);
             _database.CreateTableAsync<FavoriteCity>();
         }
@@ -24,7 +28,6 @@
             }
             catch (Exception)
             {
-
                 throw;
             }
         }
@@ -37,7 +40,6 @@
             }
             catch (Exception)
             {
-
                 throw;
             }
         }
@@ -50,7 +52,6 @@
             }
             catch (Exception)
             {
-
                 throw;
             }
         }
@@ -63,7 +64,6 @@
             }
             catch (Exception)
             {
-
                 throw;
             }
         }

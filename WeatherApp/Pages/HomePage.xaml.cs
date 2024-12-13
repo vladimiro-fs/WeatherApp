@@ -7,130 +7,136 @@ using WeatherApp.Services;
 public partial class HomePage : ContentPage
 {
     private readonly IRestService _restService;
-    private readonly CitiesService _citiesService;
+    private readonly FavoritesService _favoritesService;
     private List<City> _matchingCities;
-    private ObservableCollection<FavoriteCity>
-        FavoriteCities = new ObservableCollection<FavoriteCity>();
+    private ObservableCollection<FavoriteCity> FavoriteCities; 
 
-    public HomePage(IRestService restService, CitiesService citiesService)
+    public HomePage(IRestService restService, FavoritesService favoritesService)
 	{
 		InitializeComponent();
+        lblWelcome.Text = "Hello, " + Preferences.Get("username", string.Empty) + " ,where should we take you?";
         _restService = restService;
-        _citiesService = citiesService;       
+        _favoritesService = favoritesService;       
         _matchingCities = new List<City>();
-        
-        LoadFavoriteCities();
+        FavoriteCities = new ObservableCollection<FavoriteCity>();
+        BtnForecast.IsEnabled = false;
     }
 
-    private async void LoadFavoriteCities()
+    protected override async void OnAppearing()
+    {
+        base.OnAppearing();
+        await LoadAndDisplayFavoriteCitiesAsync();
+    }
+
+    private async Task LoadAndDisplayFavoriteCitiesAsync()
     {
         try
         {
             FavoriteCities.Clear();
 
-            var cities = await _citiesService.ReadAllAsync();
+            var favoriteCities = await _favoritesService.ReadAllAsync();
 
-            foreach (var city in cities)
+            if (favoriteCities == null || favoriteCities.Count == 0)
             {
-                FavoriteCities.Add(city);
+                lblWarning.IsVisible = true;
+                cvCities.ItemsSource = null;
             }
+            else
+            {
+                foreach (var city in favoriteCities)
+                {
+                    FavoriteCities.Add(city);
+                }
 
-            FavoritesPicker.ItemsSource = FavoriteCities;
+                lblWarning.IsVisible = false;
+                cvCities.ItemsSource = FavoriteCities;
+            }
         }
         catch (Exception ex)
         {
-            await DisplayAlert("Error", $"Failed to load favorites: {ex.Message}", "OK");
+            await DisplayAlert("Error", $"Failed to load favorite cities: {ex.Message}", "OK");
         }
     }
 
-    private async void OnCityEntryTextChanged(object sender, TextChangedEventArgs e)
-    {
-        string input = e.NewTextValue;
-
-        if (string.IsNullOrWhiteSpace(input))
-        {
-            _matchingCities.Clear();           
-            BtnForecast.IsEnabled = false;
-            return;
-        }
-
-        // Fetch city suggestions using RestService
-        var matchingCities = await FetchCitySuggestionsAsync(input);
-        _matchingCities = matchingCities; 
-        
-        BtnForecast.IsEnabled = _matchingCities.Any();
-    }
-   
-    private async Task<List<City>> FetchCitySuggestionsAsync(string input)
+    private async Task<List<City>> GetMatchingCityAsync(string input)
     {
         try
         {
-            var cities = await _restService.GetCitiesAsync(input);
-                     
-            var matchingCities = cities.Select(c => new City
-            {
-                Name = c.Name,
-                ApiId = c.ApiId,
-                Lat = c.Lat,
-                Lon = c.Lon,
-                Country = c.Country,
-                State = c.State ?? string.Empty,  
-            }).ToList();
-
-            return matchingCities;
+            return await _restService.GetCitiesAsync(input) ?? new List<City>();
         }
         catch (Exception ex)
         {
-            await DisplayAlert("Error", $"Failed to fetch city suggestions: {ex.Message}", "OK");
+            await DisplayAlert("Error", $"Failed to fetch matching cities: {ex.Message}", "OK");
             return new List<City>();
         }
     }
 
+    private async void CityEntry_TextChanged(object sender, TextChangedEventArgs e)
+    {
+        string input = e.NewTextValue;
+
+        if (string.IsNullOrEmpty(input))
+        {
+            _matchingCities.Clear();
+            BtnForecast.IsEnabled = false;
+            return;
+        }
+
+        _matchingCities = await GetMatchingCityAsync(input);
+        BtnForecast.IsEnabled = _matchingCities.Any();
+    }
+
     private async void BtnForecast_Clicked(object sender, EventArgs e)
     {
-        string cityName = lblCityEntry.Text;
+        FavoriteCity selectedFavoriteCity = cvCities.SelectedItem as FavoriteCity;
 
-        if (string.IsNullOrWhiteSpace(cityName))
+        if (!string.IsNullOrWhiteSpace(CityEntry.Text))
         {
-            await DisplayAlert("Error", "Please enter a city name.", "OK");
-            return;
+            var matchingCity = _matchingCities.FirstOrDefault(c =>
+                string.Equals(c.Name?.Trim(), CityEntry.Text.Trim(), StringComparison.OrdinalIgnoreCase));
+
+            if (matchingCity == null)
+            {
+                await DisplayAlert("Error", "No matching city found.", "OK");
+                return;
+            }
+
+            try
+            {
+                var weatherData = await _restService.GetWeatherDataAsync(matchingCity.Lat, matchingCity.Lon);
+                await Navigation.PushAsync(new WeatherPage(weatherData, _favoritesService));
+                return;
+            }
+            catch (Exception ex)
+            {
+                await DisplayAlert("Error", $"Failed to fetch weather data: {ex.Message}", "OK");
+            }
         }
-
-        if (_matchingCities == null || !_matchingCities.Any())
+        else if (selectedFavoriteCity != null)
         {
-            await DisplayAlert("Error", "No city suggestions available. Please try again later.", "OK");
-            return;
+            try
+            {
+                var weatherData = await _restService.GetWeatherDataAsync(selectedFavoriteCity.Lat, selectedFavoriteCity.Lon);
+                await Navigation.PushAsync(new WeatherPage(weatherData, _favoritesService));
+            }
+            catch (Exception ex)
+            {
+                await DisplayAlert("Error", $"Failed to fetch weather data: {ex.Message}", "OK");
+            }
         }
-
-        // Find the selected city from the suggestions
-        var selectedCity = _matchingCities.FirstOrDefault(c =>
+        else
         {
-            bool isMatch = !string.IsNullOrEmpty(c.Name) && c.Name.Trim().Equals(cityName.Trim(), StringComparison.OrdinalIgnoreCase);           
-            return isMatch;
-        });
-
-        if (selectedCity == null)
-        {
-            await DisplayAlert("Error", "City not found in suggestions. Please select a valid city.", "OK");
-            return;
-        }
-
-        try
-        {
-            // Fetch weather data for the selected city
-            var weatherData = await _restService.GetWeatherDataAsync(selectedCity.Lat, selectedCity.Lon);
-
-            // Navigate to WeatherPage
-            await Navigation.PushAsync(new WeatherPage(weatherData, _citiesService));
-        }
-        catch (Exception ex)
-        {
-            await DisplayAlert("Error", $"Failed to fetch weather data: {ex.Message}", "OK");
+            await DisplayAlert("Error", "Please enter a city name or select a favorite city.", "OK");
         }
     }
 
-    private void BtnFavoritesForecast_Clicked(object sender, EventArgs e)
+    private void cvCities_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
+        var selectedFavoriteCity = e.CurrentSelection.FirstOrDefault() as FavoriteCity;
 
+        if (selectedFavoriteCity == null)
+            return;
+
+        BtnForecast.IsEnabled = selectedFavoriteCity != null;
     }
 }

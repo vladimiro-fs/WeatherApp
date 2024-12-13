@@ -20,7 +20,7 @@
 
         public async Task<List<City>> GetCitiesAsync(string cityName) 
         {
-            string endpoint = $"https://api.openweathermap.org/geo/1.0/direct?q={cityName}&limit=5&appid={Constants.OpenWeatherMapAPIKey}";
+            string endpoint = $"{Constants.OpenWeatherGeoEndpoint}?q={cityName}&limit=5&appid={Constants.OpenWeatherMapAPIKey}";
 
             var response = await _httpClient.GetAsync(endpoint);
 
@@ -35,7 +35,7 @@
 
         public async Task<WeatherData> GetWeatherDataAsync(double latitude, double longitude) 
         {            
-            string endpoint = $"https://api.openweathermap.org/data/2.5/weather?lat={latitude}&lon={longitude}&units=metric&appid={Constants.OpenWeatherMapAPIKey}";
+            string endpoint = $"{Constants.OpenWeatherMapEndpoint}?lat={latitude}&lon={longitude}&units=metric&appid={Constants.OpenWeatherMapAPIKey}";
 
             var response = await _httpClient.GetAsync(endpoint);
 
@@ -46,6 +46,6 @@
             }
             else
                 throw new Exception("Failed to fetch weather data");           
-        }
+        }      
     }
 }
